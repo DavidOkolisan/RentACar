@@ -1,0 +1,39 @@
+{{define "header"}}
+<!DOCTYPE HTML>
+<!--<html ng-app="carRentalApp">-->
+<head>
+	<title>CARRENTAL</title>
+	<link href="/static/assets/css/bootstrap.css" rel="stylesheet" />
+    <link href="/static/app/css/main.css" rel="stylesheet" />
+
+	<script	src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="/static/app/js/main.js"></script>
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/">Home</a>
+				<a class="navbar-brand" href="/cars">Cars</a>
+				<a class="navbar-brand" href="/cities">Cities</a>
+			</div>
+		</div>
+	</nav>
+
+	<div class="jumbotron">
+		<div class="container text-center">
+			<h1>CARRENTAL</h1>
+			<p>Car rental app</p>
+		</div>
+	</div>
+{{end}}
+
+{{define "footer"}}
+	<hr>
+	<footer>
+        <p>&copy; 2016 CARRENTAL, Inc.</p>
+    </footer>
+
+</body>
+</html>
+{{end}}

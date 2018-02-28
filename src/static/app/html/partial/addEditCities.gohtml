@@ -1,0 +1,32 @@
+<h2>
+	<span ng-show="activeURL == 'add'">Add</span>
+	<span ng-show="activeURL == 'edit'">Edit</span>
+	user
+</h2>
+
+<form ng-init="init()">
+
+	<div class="form-group">
+		<label for="Name">Name</label>
+		<input type="text" class="form-control" id="Name" placeholder="Name" ng-model="city.name"/>
+	</div>
+	<div class="form-group">
+		<label for="Code">Code</label>
+		<input type="text" class="form-control" id="Code" placeholder="Code" ng-model="city.code"/>
+	</div>
+<!--
+
+	<div class="form-group">
+		<label for="RentDate">Rent date:</label>
+		<input type="text" class="form-control"	uib-datepicker-popup="yyyy/MM/dd" ng-model="city.date" />
+	</div>
+-->
+<!--	<div class="form-group" style="display: inline-block; min-height: 290px;">
+		<div uib-datepicker ng-model="city.date" class="well well-sm" datepicker-options="options"></div>
+		<pre>Selected date is: <em>{-{city.date | date:'yyyy-MM-dd' }-}</em></pre>
+	</div>-->
+	 
+	<div class="form-group">
+		<button type="submit" class="btn btn-default " ng-click="save()">Save</button>
+
+</form>

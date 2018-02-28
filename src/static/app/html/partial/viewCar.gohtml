@@ -1,0 +1,44 @@
+{{template "header" }}
+
+<h2>Car information</h2>
+
+<form id="carDetailsOverviewForm">
+	<div class="form-group col-md-6">
+		<label for="carName">Name</label>
+		<input type="text" class="form-control" id="carName" placeholder="Name..." value="{{.Brand}}" disabled="true"/>
+	</div>
+	<div class="form-group col-md-6">
+		<label for="carModel">Model</label>
+		<input type="text" class="form-control" id="carModel" placeholder="Model..." value="{{.Model}}"disabled="true"/>
+	</div>
+	<div class="form-group col-md-6">
+		<label for="carType">Type</label>
+		<input type="text" class="form-control" id="carType" placeholder="Type..."  value="{{.Type}}" disabled="true"/>
+	</div>
+	<div class="form-group col-md-6">
+		<label for="carFuel">Fuel</label>
+		<input type="text" class="form-control" id="carFuel" placeholder="Fuel type..." value="{{.Fuel}}"
+			   disabled="true"/>
+	</div>
+	<div class="form-group col-md-6">
+		<label for="carConsumption">Consumption</label>
+		<input type="text" class="form-control" id="carConsumption" placeholder="Consumption..."
+			   value="{{.Consumption}}"
+			   disabled="true"/>
+	</div>
+	<div class="form-group col-md-6">
+		<label for="carAvailable">Available</label>
+		<input type="text" class="form-control" id="carAvailable" placeholder="Available..." value="{{.Available}}"
+			   disabled="true"/>
+	</div>
+	<!--to be implemented: date last update-->
+	<!--<div class="form-group">
+		<label for="update">Last update date</label> 
+		<input type="text" class="form-control" id="update"  disabled="true"/>
+	</div>-->
+	<!--<div class="form-group">
+  		<textarea class="form-control" rows="3" ng-model="car.description" disabled="true"></textarea>
+  	</div>-->
+	
+</form>
+{{template "footer"}}

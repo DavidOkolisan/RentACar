@@ -1,0 +1,126 @@
+{{template "header" }}
+<h2>Cars<span class="badge">{{ len . }}</span></h2>
+<form class="form-horizontal">
+	<div class="form-group">
+		<label class="col-md-offset-10 col-md-1 control-label text-right">Page size</label>
+		<div class="col-md-1 selectContainer">
+			<select class="form-control" >
+				<option value="4" selected>4</option>
+				<option value="8">8</option>
+			</select>
+		</div>
+		<br/>
+	</div>
+</form>
+<form>
+	<div class="row">
+		<div class="col-lg-6">
+			<div class="input-group">
+				<span class="input-group-btn">
+					<button class="btn btn-default" type="button">Go!</button>
+				</span> 
+				<input type="text" class="form-control" placeholder="Search by brand...">
+			</div>
+		</div>
+		<div class="col-lg-6">
+			<div class="input-group">
+				<input type="text" class="form-control" placeholder="Search by model...">
+				<span class="input-group-btn"> 
+					<button type="button" onclick=" " class="btn btn-default">Go!</button>
+				</span>
+			</div>
+		</div>
+	</div><br/>
+	<button onclick="" class="btn btn-default">
+		<span class="glyphicon glyphicon-repeat" aria-hidden="true"> <strong>Reset</strong>
+		</span>
+	</button>
+</form>
+
+
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Brand</th>
+			<th>Model</th>
+			<th>Type</th>
+			<th>Fuel</th>
+			<th>Consumption</th>
+			<th>Free</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{range .}}
+		<tr>
+			<td>{{ .Car_Id }}</td>
+			<td>{{ .Brand }}</td>
+			<td>{{ .Model}}</td>
+			<td>{{ .Type}}</td>
+			<td>{{ .Fuel}}</td>
+			<td>{{ .Consumption}}</td>
+			<td>{{ .Available}}</td>
+			<td>
+				<button onclick="showCarRemovalBox()" class="btn btn-danger btn-xs">
+					<span class="glyphicon glyphicon-trash" aria-hidden="true">Delete</span>
+				</button> 
+				<span id="confirmDeleteBox" style="display: none"> Are you sure?
+					<button onclick="confirmCarRemoval({{ .Car_Id }})" class="btn btn-danger btn-xs">Yes</button>
+					<button onclick="cancelCarRemoval()" class="btn btn-warning btn-xs">No</button>
+				</span>
+				<button onclick="location.href='/cars/details?id='+{{ .Car_Id }};" class="btn btn-primary btn-xs">
+					<span class="glyphicon glyphicon-eye-open" aria-hidden="true">View</span>
+				</button>
+				<a href="/cars/edit?id={{ .Car_Id }}" class="btn btn-warning btn-xs">
+					<span class="glyphicon glyphicon-edit" aria-hidden="true">Edit</span>
+				</a>
+			</td>
+		</tr>
+		{{end}}
+	</tbody>
+</table>
+
+<!--  -->
+<!-- <div class="col-md-12 text-center" ng-show="showDeletedMessage"> -->
+<!-- 	<div class="alert alert-danger" role="alert"> -->
+<!-- 		<b>Ooops</b>, something went wrong :) -->
+<!-- 	</div> -->
+<!-- </div> -->
+<!--
+&lt;!&ndash; Error if no data recieved &ndash;&gt;
+<div class="row">
+	<div class="col-md-12 text-center">
+		<span ng-hide="hideSpinner" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+		<uib-alert type="danger" close="closeAlert()" ng-show="showError">
+			<b>Ooops</b>, something went wrong :)
+		</uib-alert>
+	</div>
+</div>
+&lt;!&ndash; Deleted car status info box &ndash;&gt;
+<div class="row">
+	<div class="col-md-12 text-center">
+		<uib-alert type="success" close="closeAlert()" ng-show="showIfDeleted">
+			Car {-{ .Car_Id }-}, is successfully deleted
+		</uib-alert>	
+		<uib-alert type="danger" close="closeAlert()" ng-show="showIfNotDeleted">
+			Error happend during car deletition {-{ .Car_Id }-}
+		</uib-alert>
+	</div>
+</div>
+
+&lt;!&ndash; Pagination &ndash;&gt;
+<div class="row">
+	<div class="col-md-12 text-right">
+		<ul uib-pagination total-items="length" ng-click="page=currentPage-1; getAll();" ng-model="currentPage" 
+		items-per-page="pageSize" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;"
+		rotate="true" boundary-link-numbers="true" max-size="2">
+		</ul>
+	</div>
+</div>
+
+<a href="/cars/add" class="btn btn-success">
+	<span class="glyphicon glyphicon-plus" aria-hidden="true">Add</span>
+</a>-->
+
+{{template "footer"}}
