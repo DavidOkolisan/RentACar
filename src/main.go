@@ -150,6 +150,7 @@ func carsOverview(w http.ResponseWriter, r *http.Request) {
 		car.setFuel(carRow["fuel_type_id"].(int64))
 		cars = append(cars, car)
 	}
+	log.Println("Render car list overview")
 	err = tpl.ExecuteTemplate(w, "cars.gohtml", cars)
 	if err != nil {
 		http.Error(w, http.StatusText(500), http.StatusInternalServerError)
@@ -200,10 +201,6 @@ func (car *Car) setBrand(id int64) {
 	switch err {
 	case sql.ErrNoRows:
 		log.Println("No rows were returned from database!")
-	case nil:
-		log.Println("Set car brand")
-	default:
-		panic(err)
 	}
 }
 
@@ -213,8 +210,6 @@ func (car *Car) setModel(id int64) {
 	switch err {
 	case sql.ErrNoRows:
 		log.Println("No rows were returned from database!")
-	default:
-		panic(err)
 	}
 }
 
@@ -224,8 +219,6 @@ func (car *Car) setCarType(id int64) {
 	switch err {
 	case sql.ErrNoRows:
 		log.Println("No rows were returned from database!")
-	default:
-		panic(err)
 	}
 }
 
@@ -235,8 +228,6 @@ func (car *Car) setFuel(id int64) {
 	switch err {
 	case sql.ErrNoRows:
 		log.Println("No rows were returned from database!")
-	default:
-		panic(err)
 	}
 }
 
@@ -260,9 +251,21 @@ func deleteCar(w http.ResponseWriter, r *http.Request) {
 
 //view specific car by id
 func carDetailsView(w http.ResponseWriter, r *http.Request) {
-	car:= carReturn(w,r)
+	carId := r.FormValue("id")
+	if carId == "" {
+		http.Error(w, http.StatusText(400), http.StatusBadRequest)
+		return
+	}
+	var car = Car{}
+	id, err := strconv.ParseInt(carId, 10, 64)
+	if err != nil {
+		log.Print("Error during converting carId to type int64")
+		http.Error(w, http.StatusText(500), http.StatusInternalServerError)
+		return
+	}
+	car.fillCarData(id)
 
-	err := tpl.ExecuteTemplate(w, "viewCar.gohtml", car)
+	err = tpl.ExecuteTemplate(w, "viewCar.gohtml", car)
 	if err != nil {
 		http.Error(w, http.StatusText(500), http.StatusInternalServerError)
 		panic(err)
@@ -270,13 +273,9 @@ func carDetailsView(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func carReturn(w http.ResponseWriter, r *http.Request) Car {
-	carId := r.FormValue("id")
-	if carId == "" {
-		http.Error(w, http.StatusText(400), http.StatusBadRequest)
-		return nil
-	}
-
+//fill car data by id
+func (car *Car) fillCarData(carId int64){
+	log.Println("Fill car data from db")
 	var modelId int64
 	var brandId int64
 	var carTypeId int64
@@ -293,26 +292,17 @@ func carReturn(w http.ResponseWriter, r *http.Request) Car {
 			       FROM car c WHERE id = $1`, carId).Scan(&modelId,&brandId,&carTypeId,&fuelTypeId,&consumption,&available)
 	switch carRow {
 	case sql.ErrNoRows:
-		log.Println("No car with id " + carId + "found in database!")
-	default:
-		panic(carRow)
+		log.Println("No car with id " + strconv.FormatInt(carId, 10) + "found in database!")
 	}
 
-	intCarId, err := strconv.ParseInt(carId, 10, 64)
-	if err != nil {
-		panic(err)
-	}
-	var car = Car{
-		Car_Id: intCarId,
-		Consumption: consumption,
-		Available: available,
-	}
+	car.Car_Id = carId
+	car.Consumption = consumption
+	car.Available = available
+
 	car.setBrand(brandId)
 	car.setModel(modelId)
 	car.setCarType(carTypeId)
 	car.setFuel(fuelTypeId)
-
-	return car
 }
 
 func carEditView(w http.ResponseWriter, r *http.Request)  {
@@ -323,7 +313,9 @@ func carEditView(w http.ResponseWriter, r *http.Request)  {
 		//createCar()
 		return
 	default:
-		car:= carReturn(w,r)
+		id, _ := strconv.ParseInt(carId, 10, 64)
+		car := Car{}
+		car.fillCarData(id)
 
 		err := tpl.ExecuteTemplate(w, "addEditCars.gohtml", car)
 		if err != nil {
