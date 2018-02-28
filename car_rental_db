@@ -1,0 +1,813 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.2
+-- Dumped by pg_dump version 10.2
+
+-- Started on 2018-02-28 19:22:21
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 2897 (class 0 OID 0)
+-- Dependencies: 2896
+-- Name: DATABASE carrental; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON DATABASE carrental IS 'carrental presentation app';
+
+
+--
+-- TOC entry 1 (class 3079 OID 12924)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2899 (class 0 OID 0)
+-- Dependencies: 1
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 197 (class 1259 OID 16761)
+-- Name: brand; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE brand (
+    id bigint NOT NULL,
+    name character varying(100) NOT NULL
+);
+
+
+ALTER TABLE brand OWNER TO postgres;
+
+--
+-- TOC entry 196 (class 1259 OID 16759)
+-- Name: brand_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE brand_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE brand_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2900 (class 0 OID 0)
+-- Dependencies: 196
+-- Name: brand_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE brand_id_seq OWNED BY brand.id;
+
+
+--
+-- TOC entry 199 (class 1259 OID 16769)
+-- Name: brand_model; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE brand_model (
+    id bigint NOT NULL,
+    brand_id bigint NOT NULL,
+    name character varying(100) NOT NULL
+);
+
+
+ALTER TABLE brand_model OWNER TO postgres;
+
+--
+-- TOC entry 2901 (class 0 OID 0)
+-- Dependencies: 199
+-- Name: COLUMN brand_model.name; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN brand_model.name IS 'Model of a specific brand f.e. Focus for brand Ford';
+
+
+--
+-- TOC entry 198 (class 1259 OID 16767)
+-- Name: brand_model_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE brand_model_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE brand_model_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2902 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: brand_model_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE brand_model_id_seq OWNED BY brand_model.id;
+
+
+--
+-- TOC entry 209 (class 1259 OID 16836)
+-- Name: car; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE car (
+    id bigint NOT NULL,
+    brand_id bigint NOT NULL,
+    model_id bigint NOT NULL,
+    car_type_id bigint NOT NULL,
+    fuel_type_id bigint NOT NULL,
+    fuel_consumption real NOT NULL,
+    rental_free boolean NOT NULL
+);
+
+
+ALTER TABLE car OWNER TO postgres;
+
+--
+-- TOC entry 208 (class 1259 OID 16834)
+-- Name: car_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE car_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE car_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2903 (class 0 OID 0)
+-- Dependencies: 208
+-- Name: car_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE car_id_seq OWNED BY car.id;
+
+
+--
+-- TOC entry 201 (class 1259 OID 16782)
+-- Name: car_type; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE car_type (
+    id bigint NOT NULL,
+    type character varying(100) NOT NULL
+);
+
+
+ALTER TABLE car_type OWNER TO postgres;
+
+--
+-- TOC entry 200 (class 1259 OID 16780)
+-- Name: car_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE car_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE car_type_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2904 (class 0 OID 0)
+-- Dependencies: 200
+-- Name: car_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE car_type_id_seq OWNED BY car_type.id;
+
+
+--
+-- TOC entry 205 (class 1259 OID 16798)
+-- Name: city; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE city (
+    id bigint NOT NULL,
+    name character varying(200) NOT NULL,
+    code character varying(200) NOT NULL
+);
+
+
+ALTER TABLE city OWNER TO postgres;
+
+--
+-- TOC entry 207 (class 1259 OID 16806)
+-- Name: city_car; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE city_car (
+    id bigint NOT NULL,
+    city_id bigint NOT NULL,
+    car_id bigint NOT NULL
+);
+
+
+ALTER TABLE city_car OWNER TO postgres;
+
+--
+-- TOC entry 206 (class 1259 OID 16804)
+-- Name: city_car_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE city_car_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE city_car_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2905 (class 0 OID 0)
+-- Dependencies: 206
+-- Name: city_car_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE city_car_id_seq OWNED BY city_car.id;
+
+
+--
+-- TOC entry 204 (class 1259 OID 16796)
+-- Name: city_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE city_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE city_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2906 (class 0 OID 0)
+-- Dependencies: 204
+-- Name: city_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE city_id_seq OWNED BY city.id;
+
+
+--
+-- TOC entry 203 (class 1259 OID 16790)
+-- Name: fuel_type; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE fuel_type (
+    id bigint NOT NULL,
+    type character varying(100) NOT NULL
+);
+
+
+ALTER TABLE fuel_type OWNER TO postgres;
+
+--
+-- TOC entry 202 (class 1259 OID 16788)
+-- Name: fuel_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE fuel_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE fuel_type_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2907 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: fuel_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE fuel_type_id_seq OWNED BY fuel_type.id;
+
+
+--
+-- TOC entry 213 (class 1259 OID 16872)
+-- Name: user; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "user" (
+    id bigint NOT NULL,
+    username character varying(250) NOT NULL,
+    password character varying(250) NOT NULL,
+    type bigint
+);
+
+
+ALTER TABLE "user" OWNER TO postgres;
+
+--
+-- TOC entry 212 (class 1259 OID 16870)
+-- Name: user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE user_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2908 (class 0 OID 0)
+-- Dependencies: 212
+-- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE user_id_seq OWNED BY "user".id;
+
+
+--
+-- TOC entry 211 (class 1259 OID 16864)
+-- Name: user_type; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE user_type (
+    id bigint NOT NULL,
+    type character varying(100) NOT NULL
+);
+
+
+ALTER TABLE user_type OWNER TO postgres;
+
+--
+-- TOC entry 210 (class 1259 OID 16862)
+-- Name: user_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE user_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE user_type_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2909 (class 0 OID 0)
+-- Dependencies: 210
+-- Name: user_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE user_type_id_seq OWNED BY user_type.id;
+
+
+--
+-- TOC entry 2719 (class 2604 OID 16764)
+-- Name: brand id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY brand ALTER COLUMN id SET DEFAULT nextval('brand_id_seq'::regclass);
+
+
+--
+-- TOC entry 2720 (class 2604 OID 16772)
+-- Name: brand_model id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY brand_model ALTER COLUMN id SET DEFAULT nextval('brand_model_id_seq'::regclass);
+
+
+--
+-- TOC entry 2725 (class 2604 OID 16839)
+-- Name: car id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY car ALTER COLUMN id SET DEFAULT nextval('car_id_seq'::regclass);
+
+
+--
+-- TOC entry 2721 (class 2604 OID 16785)
+-- Name: car_type id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY car_type ALTER COLUMN id SET DEFAULT nextval('car_type_id_seq'::regclass);
+
+
+--
+-- TOC entry 2723 (class 2604 OID 16801)
+-- Name: city id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY city ALTER COLUMN id SET DEFAULT nextval('city_id_seq'::regclass);
+
+
+--
+-- TOC entry 2724 (class 2604 OID 16809)
+-- Name: city_car id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY city_car ALTER COLUMN id SET DEFAULT nextval('city_car_id_seq'::regclass);
+
+
+--
+-- TOC entry 2722 (class 2604 OID 16793)
+-- Name: fuel_type id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY fuel_type ALTER COLUMN id SET DEFAULT nextval('fuel_type_id_seq'::regclass);
+
+
+--
+-- TOC entry 2727 (class 2604 OID 16875)
+-- Name: user id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "user" ALTER COLUMN id SET DEFAULT nextval('user_id_seq'::regclass);
+
+
+--
+-- TOC entry 2726 (class 2604 OID 16867)
+-- Name: user_type id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY user_type ALTER COLUMN id SET DEFAULT nextval('user_type_id_seq'::regclass);
+
+
+--
+-- TOC entry 2875 (class 0 OID 16761)
+-- Dependencies: 197
+-- Data for Name: brand; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY brand (id, name) FROM stdin;
+1	Ford
+\.
+
+
+--
+-- TOC entry 2877 (class 0 OID 16769)
+-- Dependencies: 199
+-- Data for Name: brand_model; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY brand_model (id, brand_id, name) FROM stdin;
+1	1	Focus
+2	1	Mondeo
+3	1	Kuga
+4	1	Mustang
+\.
+
+
+--
+-- TOC entry 2887 (class 0 OID 16836)
+-- Dependencies: 209
+-- Data for Name: car; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY car (id, brand_id, model_id, car_type_id, fuel_type_id, fuel_consumption, rental_free) FROM stdin;
+1	1	1	1	2	4.5	t
+\.
+
+
+--
+-- TOC entry 2879 (class 0 OID 16782)
+-- Dependencies: 201
+-- Data for Name: car_type; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY car_type (id, type) FROM stdin;
+1	Sport
+2	SUV
+3	Limousine
+4	Van
+5	Pick-up
+\.
+
+
+--
+-- TOC entry 2883 (class 0 OID 16798)
+-- Dependencies: 205
+-- Data for Name: city; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY city (id, name, code) FROM stdin;
+1	London	234242423
+2	Berlin	543535345
+3	Pariz	655522262
+4	Geneva	123654895
+\.
+
+
+--
+-- TOC entry 2885 (class 0 OID 16806)
+-- Dependencies: 207
+-- Data for Name: city_car; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY city_car (id, city_id, car_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2881 (class 0 OID 16790)
+-- Dependencies: 203
+-- Data for Name: fuel_type; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY fuel_type (id, type) FROM stdin;
+1	Benzine
+2	Diesel
+3	Electro
+\.
+
+
+--
+-- TOC entry 2891 (class 0 OID 16872)
+-- Dependencies: 213
+-- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY "user" (id, username, password, type) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2889 (class 0 OID 16864)
+-- Dependencies: 211
+-- Data for Name: user_type; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY user_type (id, type) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2910 (class 0 OID 0)
+-- Dependencies: 196
+-- Name: brand_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('brand_id_seq', 1, true);
+
+
+--
+-- TOC entry 2911 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: brand_model_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('brand_model_id_seq', 4, true);
+
+
+--
+-- TOC entry 2912 (class 0 OID 0)
+-- Dependencies: 208
+-- Name: car_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('car_id_seq', 1, true);
+
+
+--
+-- TOC entry 2913 (class 0 OID 0)
+-- Dependencies: 200
+-- Name: car_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('car_type_id_seq', 5, true);
+
+
+--
+-- TOC entry 2914 (class 0 OID 0)
+-- Dependencies: 206
+-- Name: city_car_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('city_car_id_seq', 1, false);
+
+
+--
+-- TOC entry 2915 (class 0 OID 0)
+-- Dependencies: 204
+-- Name: city_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('city_id_seq', 4, true);
+
+
+--
+-- TOC entry 2916 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: fuel_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('fuel_type_id_seq', 3, true);
+
+
+--
+-- TOC entry 2917 (class 0 OID 0)
+-- Dependencies: 212
+-- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('user_id_seq', 1, false);
+
+
+--
+-- TOC entry 2918 (class 0 OID 0)
+-- Dependencies: 210
+-- Name: user_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('user_type_id_seq', 1, false);
+
+
+--
+-- TOC entry 2731 (class 2606 OID 16774)
+-- Name: brand_model brand_model_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY brand_model
+    ADD CONSTRAINT brand_model_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2729 (class 2606 OID 16766)
+-- Name: brand brand_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY brand
+    ADD CONSTRAINT brand_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2741 (class 2606 OID 16841)
+-- Name: car car_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY car
+    ADD CONSTRAINT car_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2733 (class 2606 OID 16787)
+-- Name: car_type car_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY car_type
+    ADD CONSTRAINT car_type_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2739 (class 2606 OID 16811)
+-- Name: city_car city_car_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY city_car
+    ADD CONSTRAINT city_car_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2737 (class 2606 OID 16803)
+-- Name: city city_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY city
+    ADD CONSTRAINT city_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2735 (class 2606 OID 16795)
+-- Name: fuel_type fuel_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY fuel_type
+    ADD CONSTRAINT fuel_type_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2745 (class 2606 OID 16880)
+-- Name: user user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT user_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2743 (class 2606 OID 16869)
+-- Name: user_type user_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY user_type
+    ADD CONSTRAINT user_type_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2746 (class 2606 OID 16775)
+-- Name: brand_model brand_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY brand_model
+    ADD CONSTRAINT brand_id FOREIGN KEY (brand_id) REFERENCES brand(id) MATCH FULL DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2748 (class 2606 OID 16842)
+-- Name: car brand_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY car
+    ADD CONSTRAINT brand_id FOREIGN KEY (brand_id) REFERENCES brand(id) MATCH FULL DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2750 (class 2606 OID 16852)
+-- Name: car car_type_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY car
+    ADD CONSTRAINT car_type_id FOREIGN KEY (car_type_id) REFERENCES car_type(id) MATCH FULL DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2747 (class 2606 OID 16812)
+-- Name: city_car city_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY city_car
+    ADD CONSTRAINT city_id FOREIGN KEY (city_id) REFERENCES city(id) MATCH FULL DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2751 (class 2606 OID 16857)
+-- Name: car fuel_type_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY car
+    ADD CONSTRAINT fuel_type_id FOREIGN KEY (fuel_type_id) REFERENCES fuel_type(id) MATCH FULL DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2749 (class 2606 OID 16847)
+-- Name: car model_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY car
+    ADD CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES brand_model(id) MATCH FULL DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2752 (class 2606 OID 16881)
+-- Name: user type; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT type FOREIGN KEY (type) REFERENCES user_type(id) MATCH FULL DEFERRABLE INITIALLY DEFERRED;
+
+
+-- Completed on 2018-02-28 19:22:21
+
+--
+-- PostgreSQL database dump complete
+--
+

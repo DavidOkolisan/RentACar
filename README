@@ -1,0 +1,10 @@
+PostqreSQL DB car_rental_db
+
+run main.go
+
+TO BE IMPLEMENTED:
+
+- CU Car entity
+- Cities CRUD
+- Brands CRUD
+- Redesign (img, SPA)
