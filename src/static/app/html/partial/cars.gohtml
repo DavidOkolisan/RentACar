@@ -54,7 +54,7 @@
 	<tbody>
 		{{range .}}
 		<tr>
-			<td>{{ .Car_Id }}</td>
+			<td>{{ .CarId }}</td>
 			<td>{{ .Brand }}</td>
 			<td>{{ .Model}}</td>
 			<td>{{ .Type}}</td>
@@ -66,13 +66,13 @@
 					<span class="glyphicon glyphicon-trash" aria-hidden="true">Delete</span>
 				</button> 
 				<span id="confirmDeleteBox" style="display: none"> Are you sure?
-					<button onclick="confirmCarRemoval({{ .Car_Id }})" class="btn btn-danger btn-xs">Yes</button>
+					<button onclick="confirmCarRemoval({{ .CarId }})" class="btn btn-danger btn-xs">Yes</button>
 					<button onclick="cancelCarRemoval()" class="btn btn-warning btn-xs">No</button>
 				</span>
-				<button onclick="location.href='/cars/details?id='+{{ .Car_Id }};" class="btn btn-primary btn-xs">
+				<button onclick="location.href='/cars/details?id='+{{ .CarId }};" class="btn btn-primary btn-xs">
 					<span class="glyphicon glyphicon-eye-open" aria-hidden="true">View</span>
 				</button>
-				<a href="/cars/edit?id={{ .Car_Id }}" class="btn btn-warning btn-xs">
+				<a href="/cars/edit?id={{ .CarId }}" class="btn btn-warning btn-xs">
 					<span class="glyphicon glyphicon-edit" aria-hidden="true">Edit</span>
 				</a>
 			</td>
@@ -101,10 +101,10 @@
 <div class="row">
 	<div class="col-md-12 text-center">
 		<uib-alert type="success" close="closeAlert()" ng-show="showIfDeleted">
-			Car {-{ .Car_Id }-}, is successfully deleted
+			Car {-{ .CarId }-}, is successfully deleted
 		</uib-alert>	
 		<uib-alert type="danger" close="closeAlert()" ng-show="showIfNotDeleted">
-			Error happend during car deletition {-{ .Car_Id }-}
+			Error happend during car deletition {-{ .CarId }-}
 		</uib-alert>
 	</div>
 </div>

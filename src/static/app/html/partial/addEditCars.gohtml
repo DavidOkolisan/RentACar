@@ -1,33 +1,62 @@
 {{template "header" }}
 <h2>
-	<span>{-{.ActiveUrl}}</span>
+	<span>{{.EditPageType}}</span>
 	Car
 </h2>
 
+{{$brandId := .CarData.BrandId}}
+{{$modelId := .CarData.ModelId}}
+{{$typeId := .CarData.CarTypeId}}
+{{$fuelId := .CarData.FuelTypeId}}
+{{$carAvailable := .CarData.Available}}
+
+
+
 <form id="carEditForm" >
 	<div class="form-group col-md-6">
-		<label for="carName">Name</label>
-		<input type="text" class="form-control" id="carName" placeholder="Name..." value="{{.Brand}}"/>
+		<label for="brand">Name</label>
+		<select class="col-md-12 form-control" id="brand">
+			{{range $key, $value := .BrandList}}
+			<option label="{{$value.Name}}" value="{{$key}}" {{if eq $value.Id $brandId}} selected="true" {{end}}>
+			{{end}}
+		</select>
 	</div>
 	<div class="form-group col-md-6">
 		<label for="carModel">Model</label>
-		<input type="text" class="form-control" id="carModel" placeholder="Model..." value="{{.Model}}"/>
+		<select class="col-md-12 form-control" id="carModel">
+			{{range $key, $value := .ModelList}}
+			<option label="{{$value.Name}}" value="{{$key}}" {{if eq $value.Id $modelId}} selected="true" {{end}}>
+				{{end}}
+		</select>
 	</div>
 	<div class="form-group col-md-6">
 		<label for="carType">Type</label>
-		<input type="text" class="form-control" id="carType" placeholder="Type..."  value="{{.Type}}"/>
+		<select class="col-md-12 form-control" id="carType">
+			{{range $key, $value := .TypeList}}
+			<option label="{{$value.Type}}" value="{{$key}}" {{if eq $value.Id $typeId}} selected="true" {{end}}>
+				{{end}}
+		</select>
 	</div>
 	<div class="form-group col-md-6">
 		<label for="carFuel">Fuel</label>
-		<input type="text" class="form-control" id="carFuel" placeholder="Fuel type..." value="{{.Fuel}}"/>
+		<select class="col-md-12 form-control" id="carFuel">
+			{{range $key, $value := .FuelList}}
+			<option label="{{$value.Type}}" value="{{$key}}" {{if eq $value.Id $fuelId}} selected="true" {{end}}>
+				{{end}}
+		</select>
 	</div>
 	<div class="form-group col-md-6">
 		<label for="carConsumption">Consumption</label>
-		<input type="text" class="form-control" id="carConsumption" placeholder="Consumption..."  value="{{.Consumption}}"/>
+		<input type="text" class="form-control" id="carConsumption" placeholder="Consumption..."
+			   value="{{.CarData.Consumption}}"/>
 	</div>
 	<div class="form-group col-md-6">
 		<label for="carAvailable">Available</label>
-		<input type="text" class="form-control" id="carAvailable" placeholder="Available..." value="{{.Available}}"/>
+		<select class="col-md-12 form-control" id="carAvailable">
+			{{range $key, $value := .AvailableList}}
+			<option label="{{$value}}" value="{{$key}}" {{if eq $value $carAvailable}} selected="true" {{end}}>
+				{{end}}
+		</select>
 	</div>
 
     <button disabled="!$('#carName').val()" onclick="$('#showSave').show()" class="btn btn-default">

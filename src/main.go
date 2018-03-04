@@ -11,6 +11,7 @@ import (
 	"os"
 	"strings"
 	"strconv"
+	"sort"
 )
 
 var db *sql.DB
@@ -51,12 +52,27 @@ func ParseTemplates() *template.Template {
 }
 
 type Brand struct {
-	Brand_Id   int
-	Brand_Name  string
+	Id   int64
+	Name  string
+}
+
+type Model struct {
+	Id   int64
+	Name  string
+}
+
+type CarType struct {
+	Id   int64
+	Type  string
+}
+
+type FuelType struct {
+	Id   int64
+	Type  string
 }
 
 type Car struct {
-	Car_Id   int64
+	CarId   int64
 	Brand  string
 	Model string
 	Type string
@@ -65,14 +81,24 @@ type Car struct {
 	Available bool
 }
 
-type CarEdit struct {
-	Car_Id int64
-	BrandList map[int64] string
-	ModelList map[int64] string
-	TypeList map[int64] string
-	FuelList map[int64] string
+type CarRow struct  {
+	Id int64
+	ModelId int64
+	BrandId int64
+	CarTypeId int64
+ 	FuelTypeId int64
 	Consumption float64
 	Available bool
+
+}
+type CarEdit struct {
+	CarData CarRow
+	BrandList []Brand
+	ModelList []Model
+	TypeList []CarType
+	FuelList []FuelType
+	AvailableList []bool
+	EditPageType string
 }
 
 func main() {
@@ -115,7 +141,7 @@ func brandsOverview(w http.ResponseWriter, r *http.Request) {
 	brnds := make([]Brand, 0)
 	for rows.Next() {
 		brnd := Brand{}
-		err := rows.Scan(&brnd.Brand_Id, &brnd.Brand_Name) // order matters
+		err := rows.Scan(&brnd.BrandId, &brnd.Brand_Name) // order matters
 		if err != nil {
 			http.Error(w, http.StatusText(500), http.StatusInternalServerError)
 			return
@@ -140,7 +166,7 @@ func carsOverview(w http.ResponseWriter, r *http.Request) {
 	for _, carRow := range carMap{
 
 		car := Car{
-			Car_Id: carRow["id"].(int64),
+			CarId: carRow["id"].(int64),
 			Consumption: carRow["fuel_consumption"].(float64),
 			Available: carRow["rental_free"].(bool),
 		}
@@ -159,10 +185,24 @@ func carsOverview(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func mapFromDbRows(query string) (map[int] map[string]interface{}, error){
-	rows, err := db.Query(query) // Note: Ignoring errors for brevity
+func mapFromDbRows(query string, args ...int64) (map[int] map[string]interface{}, error){
+	var rows *sql.Rows
+	var err error
+	if len(args)!= 0 {
+		log.Println(args[0])
+		rows, err = db.Query(query, args[0])
+		if(err != nil) {
+			log.Println("mapFromDbRows(): Error occured while extracting rows from database.")
+			panic(err)
+		}
+	} else {
+		rows, err = db.Query(query)
+		if(err != nil) {
+			log.Println("mapFromDbRows(): Error occured while extracting rows from database.")
+			panic(err)
+		}
+	}
 	cols, err := rows.Columns()
-
 	rowNr := 0;
 	dbMap := make(map[int] map[string]interface{})
 
@@ -276,35 +316,41 @@ func carDetailsView(w http.ResponseWriter, r *http.Request) {
 //fill car data by id
 func (car *Car) fillCarData(carId int64){
 	log.Println("Fill car data from db")
-	var modelId int64
-	var brandId int64
-	var carTypeId int64
-	var fuelTypeId int64
-	var consumption float64
-	var available bool
-	carRow := db.QueryRow(`SELECT
+	carRow := CarRow{}
+	carRow.carRow(carId)
+
+	car.CarId = carId
+	car.Consumption = carRow.Consumption
+	car.Available = carRow.Available
+
+	car.setBrand(carRow.BrandId)
+	car.setModel(carRow.ModelId)
+	car.setCarType(carRow.CarTypeId)
+	car.setFuel(carRow.FuelTypeId)
+}
+
+//get car data from db by car id
+func (carRow *CarRow) carRow(carId int64) {
+	carRow.Id = carId
+	row := db.QueryRow(`SELECT
 				c.model_id,
 				c.brand_id,
 				c.car_type_id,
 				c.fuel_type_id,
 				c.fuel_consumption,
 				c.rental_free
-			       FROM car c WHERE id = $1`, carId).Scan(&modelId,&brandId,&carTypeId,&fuelTypeId,&consumption,&available)
-	switch carRow {
+			       FROM car c WHERE id = $1`, carId).Scan(&carRow.ModelId,&carRow.BrandId,&carRow.CarTypeId,
+		&carRow.FuelTypeId,&carRow.Consumption,&carRow.Available)
+
+	switch row {
 	case sql.ErrNoRows:
 		log.Println("No car with id " + strconv.FormatInt(carId, 10) + "found in database!")
 	}
+	log.Println("Extract car row from db")
 
-	car.Car_Id = carId
-	car.Consumption = consumption
-	car.Available = available
-
-	car.setBrand(brandId)
-	car.setModel(modelId)
-	car.setCarType(carTypeId)
-	car.setFuel(fuelTypeId)
 }
 
+//car edit-create func
 func carEditView(w http.ResponseWriter, r *http.Request)  {
 	carId := r.FormValue("id")
 	switch carId {
@@ -314,14 +360,124 @@ func carEditView(w http.ResponseWriter, r *http.Request)  {
 		return
 	default:
 		id, _ := strconv.ParseInt(carId, 10, 64)
-		car := Car{}
-		car.fillCarData(id)
+		carRow := CarRow{}
+		carRow.carRow(id)
 
-		err := tpl.ExecuteTemplate(w, "addEditCars.gohtml", car)
+		carEdit := CarEdit{
+			CarData: carRow,
+			BrandList: brands(),
+			ModelList: brandModels(carRow.BrandId),
+			TypeList: carTypes(),
+			FuelList: fuelTypes(),
+			AvailableList: []bool{true, false},
+			EditPageType: "Edit",
+		}
+		log.Println(carEdit)
+		err := tpl.ExecuteTemplate(w, "addEditCars.gohtml", carEdit)
 		if err != nil {
 			http.Error(w, http.StatusText(500), http.StatusInternalServerError)
 			panic(err)
 			return
 		}
 	}
+}
+
+//get all brands from db
+func brands() []Brand{
+	brandMap, err := mapFromDbRows("SELECT * FROM brand")
+	brands := make([]Brand, 0)
+	for _, brandRow := range brandMap{
+
+		brand := Brand{
+			Id: brandRow["id"].(int64),
+			Name: brandRow["name"].(string),
+		}
+		brands = append(brands, brand)
+	}
+
+	//order by names
+	sort.Slice(brands, func(i, j int) bool {
+		return brands[i].Name < brands[j].Name
+	})
+
+	if err != nil {
+		panic(err)
+	}
+	log.Println("Retrieve brand list from db")
+	return brands
+}
+
+//get all models for specific brand from db
+func brandModels(brandId int64) []Model{
+	modelMap, err := mapFromDbRows("SELECT m.id, m.name FROM brand_model m WHERE m.brand_id = $1", brandId)
+	models := make([]Model, 0)
+	for _, modelRow := range modelMap{
+
+		model := Model{
+			Id: modelRow["id"].(int64),
+			Name: modelRow["name"].(string),
+		}
+		models = append(models, model)
+	}
+
+	//order by names
+	sort.Slice(models, func(i, j int) bool {
+		return models[i].Name < models[j].Name
+	})
+
+	if err != nil {
+		panic(err)
+	}
+	log.Println("Retrieve model list from db")
+	return models
+}
+
+//get all car types from db
+func carTypes() []CarType{
+	carTypeMap, err := mapFromDbRows("SELECT * FROM car_type")
+	carTypes := make([]CarType, 0)
+	for _, carTypeRow := range carTypeMap{
+
+		carType := CarType{
+			Id: carTypeRow["id"].(int64),
+			Type: carTypeRow["type"].(string),
+		}
+		carTypes = append(carTypes, carType)
+	}
+
+	//order by types
+	sort.Slice(carTypes, func(i, j int) bool {
+		return carTypes[i].Type < carTypes[j].Type
+	})
+
+	if err != nil {
+		panic(err)
+	}
+	log.Println("Retrieve carTypes from db")
+	return carTypes
+}
+
+//get all fuel types from db
+func fuelTypes() []FuelType{
+	fuelTypeMap, err := mapFromDbRows("SELECT * FROM fuel_type")
+	fuelTypes := make([]FuelType, 0)
+	for _, fuelTypeRow := range fuelTypeMap{
+
+		fuelType := FuelType{
+			Id: fuelTypeRow["id"].(int64),
+			Type: fuelTypeRow["type"].(string),
+		}
+		fuelTypes = append(fuelTypes, fuelType)
+	}
+
+	//order by types
+	sort.Slice(fuelTypes, func(i, j int) bool {
+		return fuelTypes[i].Type < fuelTypes[j].Type
+	})
+
+	if err != nil {
+		panic(err)
+	}
+	log.Println("Retrieve fuelTypes from db")
+	return fuelTypes
 }
